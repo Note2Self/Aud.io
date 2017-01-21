@@ -3,15 +3,16 @@ const token = require('./config.json').token;
 const broadcaster = client.createVoiceBroadcast();
 
 const default_queue = [
+
 ];
 
 var queue = default_queue;
 
 run = () => {
     client.channels.get('272495528355299328').sendMessage(`:arrow_forward: **Now playing** ${queue[0][1]}.`);
-    const dispatcher = broadcaster.playStream(require('ytdl-core')(queue[0][0]));
     client.user.setGame(queue[0][1], 'https://twitch.tv//');
-    dispatcher.on('end', () => {
+    let dispatcher = broadcaster.playStream(require('ytdl-core')(queue[0][0]));
+    dispatcher.once('end', () => {
       client.channels.get('272495528355299328').sendMessage(`:pause_button: **Finished playing** ${queue[0][1]}.`);
       queue.splice(0, 1);
       if(!queue[0]) {
@@ -37,8 +38,6 @@ client.on('message', message => {
         } catch(e) {
             console.log(e);
             message.channel.sendMessage('**:warning: Warning** An error occurred.');
-        } else {
-          if(!message.member.voiceChannel) return message.channel.sendMessage("**Please join a voice channel first.**")
         }
     }
 
