@@ -37,6 +37,8 @@ client.on('message', message => {
         } catch(e) {
             console.log(e);
             message.channel.sendMessage('**:warning: Warning** An error occurred.');
+        } else {
+          if(!message.member.voiceChannel) return message.channel.sendMessage("**Please join a voice channel first.**")
         }
     }
 
