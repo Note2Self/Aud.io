@@ -3,7 +3,6 @@ const token = require('./config.json').token;
 const broadcaster = client.createVoiceBroadcast();
 
 const default_queue = [
-
 ];
 
 var queue = default_queue;
@@ -72,6 +71,15 @@ client.on('message', message => {
       const embed = new (require('discord.js')).RichEmbed()
       .setColor(0xFFA500)
       .setDescription("❯ All Commands\n\t\t`np` Show current song.\n\t\t`join` Join your voice channel.\n\t\t`leave` Leave your voice channel.\n\t\t`ping` Test bot / check song.")
+      message.channel.sendEmbed(embed, '')
+    }
+
+    if(message.content.startsWith(client.user.toString() + ' stats')) {
+      const embed = new (require('discord.js')).RichEmbed()
+      .setColor(0xFFA500)
+      .addField('Guilds', client.guilds.size, true)
+      .addField('Streams', client.voiceConnections.size, true)
+      .addField('Uptime', `${Math.round(client.uptime / (1000 * 60 * 60))}h ${Math.round(client.uptime / (1000 * 60)) % 60}m and ${Math.round(client.uptime / 1000) % 60}s`, true)
       message.channel.sendEmbed(embed, '')
     }
 })
