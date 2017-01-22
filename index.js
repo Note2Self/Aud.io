@@ -69,12 +69,10 @@ client.on('message', message => {
     }
 
     if(message.content.startsWith(client.user.toString() + ' help')) {
-      message.channel.sendMessage(`**Showing help** for **Aud.io**.\nThe 24/7 portable streamer. Command prefix: @mention\n\n**Commands:**\n\`\`\`\n
-np    | Shows the currently playing song.
-join  | Will join your voice channel and start streaming.
-leave | Leaves your voice channel and stops streaming.
-ping  | Test the bot and show current song.
-\n\`\`\``);
+      const embed = new Discord.RichEmbed()
+      .setColor(0xFFA500)
+      .setDescription("❯ All Commands\n\t❯`np` Show current song.\n\t`join` Join your voice channel.\n\t`leave` Leave your voice channel.\n\t`ping` Test bot / check song.")
+      message.channel.sendEmbed(embed, '')
     }
 })
 
