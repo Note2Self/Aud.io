@@ -58,7 +58,7 @@ client.on('message', message => {
     if(message.content.startsWith(client.user.toString() + ' eval ')) {
         if(message.author.id != '116293018742554625' && message.author.id != '153244623219851266') return;
         try {
-            message.channel.send(eval(message.content.substring(client.user.toString().length+6)), {code: 'js'});
+            message.channel.send(eval(message.content.substring(client.user.toString().length+6)), {code: 'js'}).catch(e => message.channel.sendMessage(e).then(m => console.log(e)));
         } catch(e) {
             message.channel.sendMessage(e);
         }
@@ -67,19 +67,15 @@ client.on('message', message => {
     if(message.content.startsWith(client.user.toString() + ' np')) {
       message.channel.sendMessage(`**Now Playing:** ${queue[0][1]}`);
     }
-    
-    if(message.content.startsWith(client.user.toString() + ' skip')) {
-      if(message.author.id != '116293018742554625' && message.author.id != '153244623219851266') return;
-      broadcast.end();
-      message.channel.sendMessage(":ok_hand: Skipped.");
-    }
 
     if(message.content.startsWith(client.user.toString() + ' help')) {
       const embed = new (require('discord.js')).RichEmbed()
       .setColor(0xFFA500)
-      .setDescription("❯ All Commands\n\t❯`np` Show current song.\n\t`join` Join your voice channel.\n\t`leave` Leave your voice channel.\n\t`ping` Test bot / check song.")
+      .setDescription("❯ All Commands\n\t\t`np` Show current song.\n\t\t`join` Join your voice channel.\n\t\t`leave` Leave your voice channel.\n\t\t`ping` Test bot / check song.")
       message.channel.sendEmbed(embed, '')
     }
 })
+
+process.on('unhandledRejection', e => console.log(e))
 
 client.login(token);
