@@ -67,6 +67,12 @@ client.on('message', message => {
     if(message.content.startsWith(client.user.toString() + ' np')) {
       message.channel.sendMessage(`**Now Playing:** ${queue[0][1]}`);
     }
+    
+    if(message.content.startsWith(client.user.toString() + ' skip')) {
+      if(message.author.id != '116293018742554625' && message.author.id != '153244623219851266') return;
+      broadcast.end();
+      message.channel.sendMessage(":ok_hand: Skipped.");
+    }
 
     if(message.content.startsWith(client.user.toString() + ' help')) {
       const embed = new Discord.RichEmbed()
