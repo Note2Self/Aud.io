@@ -75,7 +75,7 @@ client.on('message', message => {
     }
 
     if(message.content.startsWith(client.user.toString() + ' help')) {
-      const embed = new Discord.RichEmbed()
+      const embed = new (require('discord.js')).RichEmbed()
       .setColor(0xFFA500)
       .setDescription("❯ All Commands\n\t❯`np` Show current song.\n\t`join` Join your voice channel.\n\t`leave` Leave your voice channel.\n\t`ping` Test bot / check song.")
       message.channel.sendEmbed(embed, '')
