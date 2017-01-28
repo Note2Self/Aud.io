@@ -56,7 +56,7 @@ const commands = {
     func: (message, args) => {
       let final = ``;
       for(const command in commands) {
-        final += `\n${commands[command].name}\n\t${commands[command].desc}`
+        final += `\n__**${commands[command].name}**__\n\t${commands[command].info}`
       }
 
       message.channel.sendMessage(`__**Commands**__\n${final}`);
