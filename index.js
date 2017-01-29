@@ -9,6 +9,7 @@ const json = require(`./queue.json`).songs;
 const d_queue = json;
 let queue = d_queue;
 
+/* Funcs */
 function pad(str, l) {
   return str + ' '.repeat(l - str.length + 1);
 }
@@ -67,6 +68,19 @@ const commands = {
       message.channel.send(`= COMMANDS =\n${final}`, { code: 'asciidoc' });
     }
   },
+  'eval': {
+    name: 'eval',
+    info: 'Evaluates javascript.',
+    func: (message, args) => {
+      if(message.author.id != '116293018742554625' && message.author.id != '153244623219851266') return;
+
+      try {
+        message.channel.sendMessage(`\`OUTPUT\`\n\`\`\`js\n${eval(args)}\n\`\`\``);
+      } catch(e) {
+        message.channel.sendMessage(`\`ERROR\`\n\`\`\`js\n${e}\n\`\`\``);
+      }
+    }
+  },
   'stats': {
     name: 'stats',
     info: 'Views statistics.',
@@ -106,8 +120,6 @@ client.on('guildDelete', g => { dbots(client.guilds.size); })
 client.on('ready', () => {
   console.log('Ready.');
   dbots(client.guilds.size);
-client.on('ready', () => {
-  console.log('Ready.');
   client.channels.get('275050775154130946').sendMessage(`:heavy_check_mark: Ready!`);
   run();
   client.channels.get('275044052666417162').join().then(vc => { vc.playBroadcast(broadcast); });
