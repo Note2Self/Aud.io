@@ -8,6 +8,11 @@ const json = require(`./queue.json`).songs;
 const d_queue = json;
 let queue = d_queue;
 
+/* Padding */
+function pad(str, l) {
+  return str + ' '.repeat(l - str.length + 1);
+}
+
 /* Commands */
 const commands = {
   'ping': {
@@ -56,17 +61,24 @@ const commands = {
     func: (message, args) => {
       let final = ``;
       for(const command in commands) {
-        final += `\n__**${commands[command].name}**__\n\t${commands[command].info}`
+        final += `\n• ${pad(commands[command].name, 10)} :: ${commands[command].info}`
       }
 
-      message.channel.sendMessage(`__**Commands**__\n${final}`);
+      message.channel.send(`= COMMANDS =\n${final}`, { code: 'asciidoc' });
     }
   },
   'stats': {
     name: 'stats',
     info: 'Views statistics.',
     func: (message, args) => {
-      message.channel.sendMessage(`__**Statistics**__\n\n__**Guilds:**__ ${client.guilds.size}\n__**Channels:**__ ${client.channels.size}\n__**Users:**__ ${client.users.size}\n__**Streams:**__ ${client.voiceConnections.size}`);
+      message.channel.send(`
+= STATISTICS =
+
+• Guilds       :: ${client.guilds.size}
+• Channels     :: ${client.channels.size}
+• Users        :: ${client.users.size}
+• Streams      :: ${client.voiceConnections.size}
+`, {code: 'asciidoc'});
     }
   }
 }
