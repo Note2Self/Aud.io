@@ -94,6 +94,13 @@ const commands = {
 • Streams      :: ${client.voiceConnections.size}
 `, {code: 'asciidoc'});
     }
+  },
+  'invite': {
+    name: 'invite',
+    info: 'Retrive an invite.',
+    func: (message, args) => {
+      message.channel.sendMessage("❯ **Invite to my server**: `https://discord.gg/Vr4WHFG`\n❯ **Invite me to your server**: `https://tr.im/audioinvite`")
+    }
   }
 }
 
