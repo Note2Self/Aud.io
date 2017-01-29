@@ -1,89 +1,115 @@
-const client = new (require('discord.js')).Client();
-const token = require('./config.json').token;
-const broadcaster = client.createVoiceBroadcast();
+/* Discord */
+const Discord = require(`discord.js`);
+const client = new Discord.Client();
+const broadcast = client.createVoiceBroadcast();
 
-const default_queue = [
-];
+/* Queue */
+const json = require(`./queue.json`).songs;
+const d_queue = json;
+let queue = d_queue;
 
-var queue = default_queue;
-
-run = () => {
-    client.channels.get('272495528355299328').sendMessage(`:arrow_forward: **Now playing** ${queue[0][1]}.`);
-    client.user.setGame(queue[0][1], 'https://twitch.tv//');
-    let dispatcher = broadcaster.playStream(require('ytdl-core')(queue[0][0]));
-    dispatcher.once('end', () => {
-      client.channels.get('272495528355299328').sendMessage(`:pause_button: **Finished playing** ${queue[0][1]}.`);
-      queue.splice(0, 1);
-      if(!queue[0]) {
-          queue = default_queue;
-          run();
+/* Commands */
+const commands = {
+  'ping': {
+    name: 'ping',
+    info: 'Checks the bots ping time.',
+    func: (message, args) => {
+      const now = new Date();
+      message.channel.sendMessage(`Ping?`).then(sent => {
+        sent.edit(`Pong! Took ${new Date() - now}ms.`);
+      });
+    }
+  },
+  'np': {
+    name: 'np',
+    info: 'Sees whats currently playing.',
+    func: (message, args) => {
+      message.channel.sendMessage(`:musical_note: Now playing **${queue[0][1]}**.`);
+    }
+  },
+  'join': {
+    name: 'join',
+    info: 'Joins your voice channel and starts streaming.',
+    func: (message, args) => {
+      if(message.member.voiceChannel) {
+        message.member.voiceChannel.join().then(vc => { vc.playBroadcast(broadcast); message.channel.sendMessage(':heavy_check_mark:'); })
       } else {
-          run();
+        message.channel.sendMessage(':exclamation: You need to be in a voice channel.');
       }
-    })
+    }
+  },
+  'leave': {
+    name: 'leave',
+    info: 'Leavs your voice channel.',
+    func: (message, args) => {
+      if(message.member.voiceChannel) {
+        message.member.voiceChannel.leave();
+        message.channel.sendMessage(':heavy_check_mark:');
+      } else {
+        message.channel.sendMessage(':exclamation: You need to be in a voice channel.');
+      }
+    }
+  },
+  'help': {
+    name: 'help',
+    info: 'Shows commands for the bot.',
+    func: (message, args) => {
+      let final = ``;
+      for(const command in commands) {
+        final += `\n__**${commands[command].name}**__\n\t${commands[command].info}`
+      }
+
+      message.channel.sendMessage(`__**Commands**__\n${final}`);
+    }
+  },
+  'stats': {
+    name: 'stats',
+    info: 'Views statistics.',
+    func: (message, args) => {
+      message.channel.sendMessage(`__**Statistics**__\n__**Guilds:**__ ${client.guilds.size}\n__**Channels:**__ ${client.channels.size}\n__**Users:**__ ${client.users.size}\n__**Streams:**__ ${client.voiceConnections.size}`);
+    }
+  }
 }
 
+/* Run */
+function run() {
+  client.channels.get('275050775154130946').sendMessage(`❯ Now playing **${queue[0][1]}**.`);
+  const dispatcher = broadcast.playStream(require('ytdl-core')(queue[0][0]));
+  dispatcher.once('end', () => {
+    queue.splice(0, 1);
+    if(queue[0]) {
+      run();
+      client.user.setGame(queue[0][1], `https://twitch.tv//`);
+    } else {
+      queue = d_queue;
+      run();
+      client.user.setGame(queue[0][1], `https://twitch.tv//`);
+    }
+  })
+}
+
+/* Events */
 client.on('ready', () => {
-    client.channels.get('272495528355299328').sendMessage(`:white_check_mark: Ready! Starting stream...`).then(() => run());
-})
+  console.log('Ready.');
+  client.channels.get('275050775154130946').sendMessage(`:heavy_check_mark: Ready!`);
+  run();
+  client.channels.get('275044052666417162').join().then(vc => { vc.playBroadcast(broadcast); });
+});
 
 client.on('message', message => {
-    if(message.content == client.user.toString() + ' join') {
-        try {
-            message.member.voiceChannel.join().then(vc => {
-                vc.playBroadcast(broadcaster);
-                message.channel.sendMessage(":white_check_mark: **Done!** Should be streaming now.");
-            })
-        } catch(e) {
-            console.log(e);
-            message.channel.sendMessage('**:warning: Warning** An error occurred.');
-        }
-    }
+  if(message.content.startsWith('a|')) {
+    let command = message.content.substring(2).split(" ")[0];
+    let args = message.content.substring(3 + command.length);
 
-    if(message.content == client.user.toString() + ' ping') {
-        message.channel.sendMessage(`**Pong!** Streaming ${queue[0][1]}.`);
+    if(commands[command]) {
+      try {
+        commands[command].func(message, args);
+      } catch(e) {
+        console.error(e);
+      }
     }
-
-    if(message.content == client.user.toString() + ' leave') {
-        try {
-            message.member.voiceChannel.leave();
-            message.channel.sendMessage(":white_check_mark: **Done!** Will no longer stream here.");
-        } catch(e) {
-            console.log(e);
-            message.channel.sendMessage('**:warning: Warning** An error occurred.');
-        }
-    }
-
-    if(message.content.startsWith(client.user.toString() + ' eval ')) {
-        if(message.author.id != '116293018742554625' && message.author.id != '153244623219851266') return;
-        try {
-            message.channel.send(eval(message.content.substring(client.user.toString().length+6)), {code: 'js'}).catch(e => message.channel.sendMessage(e).then(m => console.log(e)));
-        } catch(e) {
-            message.channel.sendMessage(e);
-        }
-    }
-
-    if(message.content.startsWith(client.user.toString() + ' np')) {
-      message.channel.sendMessage(`**Now Playing:** ${queue[0][1]}`);
-    }
-
-    if(message.content.startsWith(client.user.toString() + ' help')) {
-      const embed = new (require('discord.js')).RichEmbed()
-      .setColor(0xFFA500)
-      .setDescription("❯ All Commands\n\t\t`np` Show current song.\n\t\t`join` Join your voice channel.\n\t\t`leave` Leave your voice channel.\n\t\t`ping` Test bot / check song.")
-      message.channel.sendEmbed(embed, '')
-    }
-
-    if(message.content.startsWith(client.user.toString() + ' stats')) {
-      const embed = new (require('discord.js')).RichEmbed()
-      .setColor(0xFFA500)
-      .addField('Guilds', client.guilds.size, true)
-      .addField('Streams', client.voiceConnections.size, true)
-      .addField('Uptime', `${Math.round(client.uptime / (1000 * 60 * 60))}h ${Math.round(client.uptime / (1000 * 60)) % 60}m and ${Math.round(client.uptime / 1000) % 60}s`, true)
-      message.channel.sendEmbed(embed, '')
-    }
+  }
 })
 
-process.on('unhandledRejection', e => console.log(e))
-
-client.login(token);
+/* Login */
+client.login(require(`./config.json`).token);
