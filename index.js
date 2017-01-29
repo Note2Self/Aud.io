@@ -9,7 +9,6 @@ const json = require(`./queue.json`).songs;
 const d_queue = json;
 let queue = d_queue;
 
-/* Funcs */
 function pad(str, l) {
   return str + ' '.repeat(l - str.length + 1);
 }
@@ -107,6 +106,8 @@ client.on('guildDelete', g => { dbots(client.guilds.size); })
 client.on('ready', () => {
   console.log('Ready.');
   dbots(client.guilds.size);
+client.on('ready', () => {
+  console.log('Ready.');
   client.channels.get('275050775154130946').sendMessage(`:heavy_check_mark: Ready!`);
   run();
   client.channels.get('275044052666417162').join().then(vc => { vc.playBroadcast(broadcast); });
