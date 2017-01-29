@@ -2,11 +2,17 @@
 const Discord = require(`discord.js`);
 const client = new Discord.Client();
 const broadcast = client.createVoiceBroadcast();
+const dbots = require(`./dbots.js`);
 
 /* Queue */
 const json = require(`./queue.json`).songs;
 const d_queue = json;
 let queue = d_queue;
+
+/* Funcs */
+function pad(str, l) {
+  return str + ' '.repeat(l - str.length + 1);
+}
 
 /* Commands */
 const commands = {
@@ -56,33 +62,52 @@ const commands = {
     func: (message, args) => {
       let final = ``;
       for(const command in commands) {
-        final += `\n__**${commands[command].name}**__\n\t${commands[command].info}`
+        final += `\n• ${pad(commands[command].name, 10)} :: ${commands[command].info}`
       }
 
-      message.channel.sendMessage(`__**Commands**__\n${final}`);
+      message.channel.send(`= COMMANDS =\n${final}`, { code: 'asciidoc' });
+    }
+  },
+  'stats': {
+    name: 'stats',
+    info: 'Views statistics.',
+    func: (message, args) => {
+      message.channel.send(`
+= STATISTICS =
+
+• Guilds       :: ${client.guilds.size}
+• Channels     :: ${client.channels.size}
+• Users        :: ${client.users.size}
+• Streams      :: ${client.voiceConnections.size}
+`, {code: 'asciidoc'});
     }
   }
 }
 
 /* Run */
 function run() {
-  client.user.setGame(queue[0][1], `https://twitch.tv//`);
+  client.channels.get('275050775154130946').sendMessage(`❯ Now playing **${queue[0][1]}**.`);
   const dispatcher = broadcast.playStream(require('ytdl-core')(queue[0][0]));
   dispatcher.once('end', () => {
     queue.splice(0, 1);
     if(queue[0]) {
       run();
+      client.user.setGame(queue[0][1], `https://twitch.tv//`);
     } else {
       queue = d_queue;
       run();
+      client.user.setGame(queue[0][1], `https://twitch.tv//`);
     }
   })
 }
 
 /* Events */
+client.on('guildCreate', g => { dbots(client.guilds.size); })
+client.on('guildDelete', g => { dbots(client.guilds.size); })
 client.on('ready', () => {
   console.log('Ready.');
-  client.channels.get('272495528355299328').sendMessage(`:heavy_check_mark: Ready!`);
+  dbots(client.guilds.size);
+  client.channels.get('275050775154130946').sendMessage(`:heavy_check_mark: Ready!`);
   run();
   client.channels.get('275044052666417162').join().then(vc => { vc.playBroadcast(broadcast); });
 });
