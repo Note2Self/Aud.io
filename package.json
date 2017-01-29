@@ -1,14 +1,15 @@
 {
   "name": "aud.io",
   "version": "1.0.0",
-  "description": "",
+  "description": "A 24/7 streamer.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Jacob Bond, Jack",
   "license": "ISC",
   "dependencies": {
-    "komada": "^0.12.4"
+    "discord.js": "github:hydrabolt/discord.js#indev-prism",
+    "node-opus": "^0.2.4"
   }
 }

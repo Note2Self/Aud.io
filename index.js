@@ -2,13 +2,13 @@
 const Discord = require(`discord.js`);
 const client = new Discord.Client();
 const broadcast = client.createVoiceBroadcast();
+const dbots = require(`./dbots.js`);
 
 /* Queue */
 const json = require(`./queue.json`).songs;
 const d_queue = json;
 let queue = d_queue;
 
-/* Padding */
 function pad(str, l) {
   return str + ' '.repeat(l - str.length + 1);
 }
@@ -101,6 +101,11 @@ function run() {
 }
 
 /* Events */
+client.on('guildCreate', g => { dbots(client.guilds.size); })
+client.on('guildDelete', g => { dbots(client.guilds.size); })
+client.on('ready', () => {
+  console.log('Ready.');
+  dbots(client.guilds.size);
 client.on('ready', () => {
   console.log('Ready.');
   client.channels.get('275050775154130946').sendMessage(`:heavy_check_mark: Ready!`);
