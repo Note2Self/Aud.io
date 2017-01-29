@@ -66,7 +66,7 @@ const commands = {
     name: 'stats',
     info: 'Views statistics.',
     func: (message, args) => {
-      message.channel.sendMessage(`__**Statistics**__\n__**Guilds:**__ ${client.guilds.size}\n__**Channels:**__ ${client.channels.size}\n__**Users:**__ ${client.users.size}\n__**Streams:**__ ${client.voiceConnections.size}`);
+      message.channel.sendMessage(`__**Statistics**__\n\n__**Guilds:**__ ${client.guilds.size}\n__**Channels:**__ ${client.channels.size}\n__**Users:**__ ${client.users.size}\n__**Streams:**__ ${client.voiceConnections.size}`);
     }
   }
 }
