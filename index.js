@@ -6,8 +6,10 @@ const dbots = require(`./dbots.js`);
 
 /* Queue */
 const json = require(`./queue.json`).songs;
-const d_queue = json;
-let queue = d_queue;
+var d_queue = json;
+var queue = [];
+
+for(const item in json) { queue.push(json[item]); }
 
 /* Funcs */
 function pad(str, l) {
@@ -106,17 +108,18 @@ const commands = {
 
 /* Run */
 function run() {
-  client.channels.get('275050775154130946').sendMessage(`❯ Now playing **${queue[0][1]}**.`);
   const dispatcher = broadcast.playStream(require('ytdl-core')(queue[0][0]));
   dispatcher.once('end', () => {
     queue.splice(0, 1);
     if(queue[0]) {
       run();
       client.user.setGame(queue[0][1], `https://twitch.tv//`);
+      client.channels.get('275050775154130946').sendMessage(`❯ Now playing **${queue[0][1]}**.`);
     } else {
-      queue = d_queue;
+      for(const item in json) { queue.push(require(`./queue.json`).songs[item]); }
       run();
       client.user.setGame(queue[0][1], `https://twitch.tv//`);
+      client.channels.get('275050775154130946').sendMessage(`❯ Now playing **${queue[0][1]}**.`);
     }
   })
 }
@@ -127,9 +130,9 @@ client.on('guildDelete', g => { dbots(client.guilds.size); })
 client.on('ready', () => {
   console.log('Ready.');
   dbots(client.guilds.size);
-  client.channels.get('275050775154130946').sendMessage(`:heavy_check_mark: Ready!`);
+  //client.channels.get('275050775154130946').sendMessage(`:heavy_check_mark: Ready!`);
   run();
-  client.channels.get('275044052666417162').join().then(vc => { vc.playBroadcast(broadcast); });
+  try { client.channels.get('275044052666417162').join().then(vc => { vc.playBroadcast(broadcast); }); } catch(e) { }
 });
 
 client.on('message', message => {
