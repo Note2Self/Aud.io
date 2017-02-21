@@ -1,15 +1,24 @@
 {
   "name": "aud.io",
-  "version": "2.1.0",
-  "description": "A 24/7 streamer.",
+  "version": "1.0.0",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Jacob Bond, Jack",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JackMagicOfficial/Aud.io.git"
+  },
+  "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JackMagicOfficial/Aud.io/issues"
+  },
+  "homepage": "https://github.com/JackMagicOfficial/Aud.io#readme",
   "dependencies": {
     "discord.js": "github:hydrabolt/discord.js#indev-prism",
-    "node-opus": "^0.2.4"
+    "request": "^2.79.0",
+    "youtube-dl": "^1.11.1"
   }
 }
